@@ -1,7 +1,7 @@
 <template>
   <div class="navbar">
     <div class="flex-box">
-      <el-button type="primary">
+      <el-button @click="handleCollapse">
         <el-icon><Expand/></el-icon>
      </el-button>
      <p class="page-title">导航栏</p>
@@ -27,6 +27,9 @@
 </template>
 
 <script setup>
+import { Expand, ArrowDown } from '@element-plus/icons-vue'
+import { useadminStore } from '../stores/admin'
+
 const handleCommand = (val) => {
   switch(val) {
     case 'add':
@@ -39,6 +42,10 @@ const handleCommand = (val) => {
       console.log('删除')
       break
   }
+}
+
+const handleCollapse = () => {
+  useadminStore().toggleCollapse()
 }
 </script>
 

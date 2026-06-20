@@ -2,7 +2,7 @@ import { createRouter, createWebHistory } from 'vue-router'
 
 const routes = [
 {
-    path: '/backend-layout',
+    path: '/back',
     name: 'BackendLayout',
     component: () => import('../views/BackendLayout.vue'),
       children:[
@@ -23,7 +23,7 @@ const routes = [
         }
       },
       {
-        path:'knowledge',
+        path:'consulations',
         component:()=>import('../views/consulations.vue'),
         meta:{
           title:'咨询记录',
@@ -39,8 +39,31 @@ const routes = [
         }
       }
     ]
-    
   },
+  {
+    path: '/auth',
+    name: 'AuthLayout',
+    component: () => import('../views/AuthLayout.vue'),
+    redirect: '/auth/login',
+    children: [
+      {
+        path: 'login',
+        name: 'Login',
+        component: () => import('../views/login.vue'),
+        meta: {
+          title: '登录'
+        }
+      },
+      {
+        path: 'register',
+        name: 'Register',
+        component: () => import('../views/register.vue'),
+        meta: {
+          title: '注册'
+        }
+      }
+    ]
+  }
 ]
 
 const router = createRouter({

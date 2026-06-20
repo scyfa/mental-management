@@ -11,18 +11,19 @@
 const props=defineProps({
     title:{
         type:String,
-        defalut:'页面标题'
+        default:'页面标题'
     }
 })
 </script>
 
 <style lang="scss" scoped>
    .page-head{
+    margin-bottom: 20px;
     display: flex;
     align-items: center;
     justify-content: space-between;
     .page-title{
-        font: size 24px;
+        font-size: 24px;
         color:#2d3748
     }
    }
