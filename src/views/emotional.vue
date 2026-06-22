@@ -34,7 +34,7 @@
             <el-table-column label="操作" width="240px" fixed="right"> 
                 <template #default="scope">
                     <el-button text type="primary" @click="viewSessionDetail(scope.row)">详情</el-button>
-                    <el-button text type="danger">删除</el-button>
+                    <el-button text type="danger" @click="handleDelete(scope.row)">删除</el-button>
                 </template>
             </el-table-column>
         </el-table>
@@ -70,6 +70,7 @@
                     </el-descriptions-item>
                     <el-descriptions-item label="主要情绪">
                         <el-tag :type="getEmotionTagType(currentDetail.dominantEmotion)">{{currentDetail.dominantEmotion||'-'}}
+                        </el-tag>
                     </el-descriptions-item>
                     <el-descriptions-item label="睡眠质量">{{currentDetail.sleepQuality||'-'}}</el-descriptions-item>
                     <el-descriptions-item label="压力水平">{{currentDetail.stressLevel||'-'}}</el-descriptions-item>
@@ -82,25 +83,40 @@
                     <el-descriptions-item label="日记内容">{{currentDetail.diaryContent||'无'}}</el-descriptions-item>
                 </el-descriptions>
             </div>
-             <div class="detail-section">
+             <div class="detail-section" v-if="aiData">
                 <h4>AI情绪分析结果</h4>
                   <el-descriptions :column="2" border>
-                    <el-descriptions-item label="情绪触发因素">{{currentDetail.emotionTriggers||'无'}}</el-descriptions-item>
-                    <el-descriptions-item label="日记内容">{{currentDetail.diaryContent||'无'}}</el-descriptions-item>
+                    <el-descriptions-item label="情绪状态">
+                      <el-tag :type="getAiEmotionTagType(aiData.emotion)">{{aiData.emotion||'-'}}</el-tag>
+                    </el-descriptions-item>
+                    <el-descriptions-item label="情绪评分">
+                      <span :style="{ color: getEmotionScoreColor(aiData.emotionScore) }">{{aiData.emotionScore||'-'}} 分</span>
+                    </el-descriptions-item>
+                    <el-descriptions-item label="风险评估">
+                      <el-tag :type="getRiskLevelTagType(aiData.riskLevel)">{{getRiskLevelText(aiData.riskLevel)}}</el-tag>
+                    </el-descriptions-item>
+                    <el-descriptions-item label="分析时间">{{aiData.analysisTime||'-'}}</el-descriptions-item>
+                    <el-descriptions-item label="分析详情" :span="2">{{aiData.analysisDetail||aiData.summary||'无'}}</el-descriptions-item>
                 </el-descriptions>
             </div>
-
         </div>
+
+        <template #footer>
+          <div class="dialog-footer">
+            <el-button @click="detailDialogVisible = false">关 闭</el-button>
+          </div>
+        </template>
         </el-dialog>
         
     </div>
 </template>
 
 <script setup >
-import {ref,onMounted,reactive} from 'vue'
+import { ref, onMounted, reactive } from 'vue'
+import { ElMessage } from 'element-plus'
 import PageHead from '../components/PageHead.vue'
 import TableSearch from '../components/TableSearch.vue'
-import {getEmotionPage} from '../api/admin'
+import { getEmotionPage, deleteEmotion } from '../api/admin'
 const getEmotionTagType = (emotion) => {
   const emotionTypes = {
     '快乐': 'success',
@@ -175,34 +191,69 @@ const formItem=[
 
     ]}
 ]
-const pagination=reactive({
-    currentPage:1,
-    size:10,
-    total:0
+const pagination = reactive({
+  currentPage: 1,
+  size: 10,
+  total: 0
 })
-const tableData=ref([])
-const handleChange=(page)=>{
-    pagination.currentPage=page
-    handleSearch()
-}
-const handleSearch=async(formData)=>{
-    const params = {
-        currentPage: pagination.currentPage,
-        size: pagination.size,
-        ...formData
-    }
+const tableData = ref([])
+const allRecords = ref([])     // 存储所有原始数据
+const searchForm = ref({})     // 当前筛选条件
 
-    const {records,total}=await getEmotionPage(params)
-    console.log(records);
-    
-    tableData.value=records
-    pagination.total=total
+// 搜索：保存筛选条件并重置页码
+const handleSearch = (formData = {}) => {
+  searchForm.value = formData
+  pagination.currentPage = 1
+  fetchData()
+}
+
+// 翻页
+const handleChange = (page) => {
+  pagination.currentPage = page
+  applyFilter()
+}
+
+// 获取数据
+const fetchData = async () => {
+  const params = {
+    currentPage: 1,
+    size: 9999  // 获取所有数据（服务端不支持筛选，只能拉全量过滤）
+  }
+  const { records } = await getEmotionPage(params)
+  allRecords.value = records || []
+  applyFilter()
+}
+
+// 客户端过滤 + 分页
+const applyFilter = () => {
+  let filtered = [...allRecords.value]
+  const { modScoreRange, userId } = searchForm.value
+
+  // 按情绪评分范围过滤
+  if (modScoreRange) {
+    const [min, max] = modScoreRange.split('-').map(Number)
+    filtered = filtered.filter(item => item.moodScore >= min && item.moodScore <= max)
+  }
+  // 按用户ID过滤（数字ID转字符串精确匹配）
+  if (userId) {
+    filtered = filtered.filter(item => String(item.id) === userId)
+  }
+
+  pagination.total = filtered.length
+  const start = (pagination.currentPage - 1) * pagination.size
+  tableData.value = filtered.slice(start, start + pagination.size)
 }
 
 // 详情
 const  detailDialogVisible=ref(false)
 const currentDetail = ref(null)
 const aiData=ref(null)
+
+const handleDelete = async (row) => {
+  await deleteEmotion(row.id)
+  ElMessage.success('删除成功')
+  handleSearch()
+}
 
 const viewSessionDetail=(row)=>{
    currentDetail.value=row
@@ -218,3 +269,24 @@ onMounted(()=>{
 })
     
 </script>
+
+<style lang="scss" scoped>
+.detail-section {
+  margin-bottom: 24px;
+
+  h4 {
+    margin: 0 0 12px 0;
+    color: #333;
+    font-size: 15px;
+    font-weight: 600;
+    padding-left: 8px;
+    border-left: 3px solid #409eff;
+  }
+}
+
+.dialog-footer {
+  display: flex;
+  justify-content: flex-end;
+  gap: 12px;
+}
+</style>

@@ -20,34 +20,44 @@
     </el-form>
 </template>
 <script setup>
-import {reactive,computed,ref} from 'vue'
+import { reactive, computed, ref, watch } from 'vue'
 
-const ruleFormRef=ref(null)
-const formData=reactive({
+const ruleFormRef = ref(null)
+const formData = reactive({})
 
-})
+const emit = defineEmits(['search'])
 
-const emit=defineEmits(['search'])
-
-const props=defineProps({
-    formItem:{
-        type:Array,
-        default:()=>[]
+const props = defineProps({
+    formItem: {
+        type: Array,
+        default: () => []
     }
 })
 
-const formItemAttrs=computed(()=>{
-    const {formItem}=props
-    formItem.forEach(item=>{
-        item.col={
-            xs:24,
-            sm:12,
-            md:8,
-            lg:6,
-            xl:6
-        }
+// 基于 formItem 初始化 formData 字段（保证响应式跟踪）
+watch(
+  () => props.formItem,
+  (items) => {
+    items.forEach(item => {
+      if (!(item.prop in formData)) {
+        formData[item.prop] = ''
+      }
     })
-    return formItem
+  },
+  { immediate: true, deep: true }
+)
+
+const formItemAttrs = computed(() => {
+  return props.formItem.map(item => ({
+    ...item,
+    col: {
+      xs: 24,
+      sm: 12,
+      md: 8,
+      lg: 6,
+      xl: 6
+    }
+  }))
 })
 // const isComp=(comp)=>{
 //     return{

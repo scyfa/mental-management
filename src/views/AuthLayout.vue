@@ -3,9 +3,9 @@
     <div class="left-section">
         <div class="content">
             <h2 class="title">心理AI助手</h2>
-            <p>每个深夜，每个焦虑的时刻，我们都在这里，不必独自承受，让心与心的连接温暖你的每一天</p>
+            <p class="desc">每个深夜，每个焦虑的时刻<br/>我们都在这里，不必独自承受<br/>让心与心的连接温暖你的每一天</p>
             <div class="robot">
-                <el-image style="width:90px;heigth:90px" :src="iconURl"></el-image>
+                <el-image style="width:100px; height:100px" :src="iconURl"></el-image>
             </div>
         </div>
     </div>
@@ -36,17 +36,19 @@ const iconURl= new URL('../assets/robot-fill.png',import.meta.url).href
             justify-content: center;
             align-items: center;
             .title {
-                margin-bottom: 20px;
-                font-size: 40px;
+                margin-bottom: 30px;
+                font-size: 42px;
                 font-weight: bold;
                 color: #fff;
+                letter-spacing: 2px;
             }
-            .text {
-                margin-bottom: 20px;
-                width: 460px;
-                font-size: 20px;
-                color: #fff;
+            .desc {
+                margin-bottom: 40px;
+                width: 420px;
+                font-size: 18px;
+                color: rgba(255, 255, 255, 0.9);
                 text-align: center;
+                line-height: 1.8;
             }
             .robot {
                 display: flex;
@@ -57,7 +59,7 @@ const iconURl= new URL('../assets/robot-fill.png',import.meta.url).href
                 border-radius: 50%;
                 border: 2px solid rgba(255, 255, 255, 0.2);
                 background: linear-gradient(135deg, rgba(255, 255, 255, 0.15) 0%, rgba(255, 255, 255, 0.05) 100%);
-                box-shadow: 0 15px 35px rgba(0, 0, 0, 0.1),inset 0 1px 0 rgba(255, 255, 255, 0.3);
+                box-shadow: 0 15px 35px rgba(0, 0, 0, 0.1), inset 0 1px 0 rgba(255, 255, 255, 0.3);
             }
         }
     }

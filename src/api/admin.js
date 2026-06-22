@@ -50,3 +50,14 @@ export function getSessionDetail(sessionId){
 export function getEmotionPage(params){
     return service.get('/emotion-diary/admin/page',{params})
 }
+
+export function deleteEmotion(id){
+    return service.delete(`/emotion-diary/admin/${id}`)
+}
+
+export function getAnalyticsOverview(){
+    return service.get('/data-analytics/overview')
+}
+export function logout(){
+    return service.post('/user/logout')
+}

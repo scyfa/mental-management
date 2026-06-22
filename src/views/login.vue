@@ -66,6 +66,8 @@ const handleLogin = (formEl) => {
          localStorage.setItem('userInfo',JSON.stringify(data.userInfo))
          if(data.userInfo.userType===2){
            router.push('/back/dashboard')
+         }else{
+          router.push('/')
          }
        })
     }

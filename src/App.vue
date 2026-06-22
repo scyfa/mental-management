@@ -1,7 +1,5 @@
   <template>
-
-<router-link to="/back">后台布局</router-link>
-  <router-view />
+   <router-view></router-view>
     
 </template>
 

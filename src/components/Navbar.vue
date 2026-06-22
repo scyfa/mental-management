@@ -4,7 +4,7 @@
       <el-button @click="handleCollapse">
         <el-icon><Expand/></el-icon>
      </el-button>
-     <p class="page-title">导航栏</p>
+     <p class="page-title">{{route.meta.title}}</p>
     </div>
 
     <div class="flex-box">
@@ -16,9 +16,7 @@
         </div>
         <template #dropdown>
             <el-dropdown-menu>
-              <el-dropdown-item command="add">新增</el-dropdown-item>
-              <el-dropdown-item command="edit">编辑</el-dropdown-item>
-              <el-dropdown-item command="del" divided>删除</el-dropdown-item>
+              <el-dropdown-item command="logout" divided>退出登录</el-dropdown-item>
             </el-dropdown-menu>
         </template>
       </el-dropdown>
@@ -28,19 +26,26 @@
 
 <script setup>
 import { Expand, ArrowDown } from '@element-plus/icons-vue'
+import { useRoute, useRouter } from 'vue-router'
+import { ElMessageBox } from 'element-plus'
 import { useadminStore } from '../stores/admin'
-
+import {logout} from '../api/admin'
+const route=useRoute()
+const router=useRouter()
 const handleCommand = (val) => {
-  switch(val) {
-    case 'add':
-      console.log('新增')
-      break
-    case 'edit':
-      console.log('编辑')
-      break
-    case 'del':
-      console.log('删除')
-      break
+  if (val === 'logout') {
+    ElMessageBox.confirm('确定要退出登录吗？', '提示', {
+      confirmButtonText: '确定',
+      cancelButtonText: '取消',
+      type: 'warning'
+    }).then(() => {
+      logout().then(()=>{
+        localStorage.removeItem('token')
+        localStorage.removeItem('userInfo')
+      router.push('/auth/login')
+
+      })
+    }).catch(() => {})
   }
 }
 

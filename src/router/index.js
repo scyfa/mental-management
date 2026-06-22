@@ -3,6 +3,7 @@ import { createRouter, createWebHistory } from 'vue-router'
 const routes = [
 {
     path: '/back',
+    redirect:'/back/dashboard',
     name: 'BackendLayout',
     component: () => import('../views/BackendLayout.vue'),
       children:[
@@ -66,9 +67,71 @@ const routes = [
   }
 ]
 
+const frontendRoutes = [
+  {
+    path: '/',
+    component: () => import('../components/FrontendLayout.vue'),
+    redirect: '/home',
+    children: [
+      {
+        path: 'home',
+        name: 'FrontHome',
+        component: () => import('../views/frontend/Home.vue'),
+        meta: { title: '首页' }
+      },
+      {
+        path: 'consulation',
+        name: 'FrontConsulation',
+        component: () => import('../views/frontend/AIConsulation.vue'),
+        meta: { title: 'AI咨询' }
+      },
+      {
+        path: 'emotion-diary',
+        name: 'FrontEmotionDiary',
+        component: () => import('../views/frontend/EmotionDiary.vue'),
+        meta: { title: '情绪日记' }
+      },
+      {
+        path: 'knowledge',
+        name: 'FrontKnowledge',
+        component: () => import('../views/frontend/KnowledgeBase.vue'),
+        meta: { title: '知识库' }
+      }
+    ]
+  }
+]
+
 const router = createRouter({
   history: createWebHistory(),
-  routes,
+  routes: [ ...routes,...frontendRoutes],
+})
+
+router.beforeEach((to,from,next)=>{
+  const token=localStorage.getItem('token')
+  if(token){
+    const userInfo= JSON.parse(localStorage.getItem('userInfo'))
+    if(userInfo&&userInfo.userType==2)
+    {
+        if(to.path.startsWith('/back')){
+          next()
+        }else{
+          next('/back/dashboard')
+        }
+    }
+    else if(userInfo.userType==1){
+      if(to.path.startsWith('/back')||to.path.startsWith('/auth')){
+          next('/')
+      }else{
+        next()
+      }
+    }
+  }else{
+    if(to.path.startsWith('/back')){
+      next('/auth/login')
+    }else{
+      next()
+    }
+  }
 })
 
 export default router
