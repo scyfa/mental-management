@@ -1,0 +1,1 @@
+import{n as e,o as t,r as n,t as r}from"./index-CpD20XJm.js";var i={},a={class:`home`};function o(r,i){return t(),n(`div`,a,[...i[0]||=[e(`h1`,null,`首页`,-1),e(`p`,null,`欢迎来到心理健康项目`,-1)]])}var s=r(i,[[`render`,o]]);export{s as default};

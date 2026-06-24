@@ -1,0 +1,1 @@
+import{M as e,r as t,w as n,x as r}from"./index-Cf3z45Yv.js";var i={},a={class:`knowledge-page`};function o(t,i){return e(),n(`div`,a,[...i[0]||=[r(`h1`,null,`知识库`,-1),r(`p`,null,`心理健康知识文章`,-1)]])}var s=t(i,[[`render`,o]]);export{s as default};

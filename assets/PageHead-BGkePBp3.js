@@ -1,0 +1,1 @@
+import{M as e,P as t,Y as n,r,w as i,x as a}from"./index-Dud2T9Oz.js";var o={class:`page-head`},s={class:`page-title`},c={class:`action-btn`},l=r({__name:`PageHead`,props:{title:{type:String,default:`页面标题`}},setup(r){let l=r;return(r,u)=>(e(),i(`div`,o,[a(`p`,s,n(l.title),1),a(`div`,c,[t(r.$slots,`buttons`,{},void 0,!0)])]))}},[[`__scopeId`,`data-v-76148018`]]);export{l as t};

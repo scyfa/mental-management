@@ -1,0 +1,1 @@
+import{i as e,n as t,r as n,t as r}from"./index-BZyPOcML.js";var i={},a={class:`home`};function o(r,i){return e(),n(`div`,a,[...i[0]||=[t(`h1`,null,`首页`,-1),t(`p`,null,`欢迎来到心理健康项目`,-1)]])}var s=r(i,[[`render`,o],[`__scopeId`,`data-v-31fc1873`]]);export{s as default};
